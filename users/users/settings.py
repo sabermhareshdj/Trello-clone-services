@@ -20,6 +20,7 @@ ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', [])
 # Application definition
 
 INSTALLED_APPS = [
+    'accounts',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -29,6 +30,7 @@ INSTALLED_APPS = [
 
     # Thrid Party Apps
     'rest_framework',
+    'rest_framework_simplejwt',
 
     # Our Apps
 ]
@@ -66,17 +68,17 @@ WSGI_APPLICATION = 'users.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("DB_NAME"),
-        "USER": os.getenv("DB_USER"),
-        "PASSWORD": os.getenv("DB_PASSWORD"),
-        "HOST": os.getenv("DB_HOST"),
+        "NAME": os.getenv("DB_NAME", "trello_auth"),
+        "USER": os.getenv("DB_USER", "postgres"),
+        "PASSWORD": os.getenv("DB_PASSWORD", "postgres"),
+        "HOST": os.getenv("DB_HOST", "auth-db"),
         "PORT": os.getenv("DB_PORT", "5432"),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
@@ -118,3 +120,24 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+
+# rest_framework settings
+REST_FRAMEWORK = {
+
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+
+}
+
+# celery config
+
+CELERY_BROKER_URL=os.getenv("CELERY_BROKER_URL","amqp://guest:guest@localhost:5672//")
+CELERY_RESULT_BACKEND=os.getenv("CELERY_RESULT_BACKEND","//redis:6379/0")
+
+# Custom User model
+
+AUTH_USER_MODEL = "accounts.User"
